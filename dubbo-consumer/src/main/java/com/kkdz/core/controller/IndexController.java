@@ -1,8 +1,9 @@
 package com.kkdz.core.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.PostConstruct;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.kkdz.core.service.CustomService;
@@ -10,7 +11,17 @@ import com.kkdz.core.service.CustomService;
 @Controller
 public class IndexController {
 	
-	@Autowired
+	@SuppressWarnings("resource")
+	@PostConstruct
+	void init() {
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] { "dubbo-config.xml" });
+		context.start();
+		CustomService demoService = (CustomService) context.getBean("myCustomService"); // 获取远程服务代理
+		this.customService = demoService;
+//		context.close();
+	}
+	
+	//@Autowired
 	private CustomService customService;
 	
 	@RequestMapping("/hello")
